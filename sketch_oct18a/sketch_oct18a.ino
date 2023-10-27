@@ -1,18 +1,32 @@
-String mySt="";
-boolean stringComplete = false;
 void setup() {
-  // put your setup code here, to run once:
-Serial.begin(9600);
+  Serial.begin(9600);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  if(Serial.available()){
-  mySt= Serial.readString();
-Serial.print("Hello world from arduino");
+  if (Serial.available()) {
+    String number1 = Serial.readStringUntil('\n');
+    String number2 = Serial.readStringUntil('\n');
+    String operation = Serial.readStringUntil('\n');                           
+    double result = calculate(number1.toDouble(), number2.toDouble(), operation);
+    Serial.println(result);
 
+    Serial.println();
   }
-  
+}
 
-  mySt=""; 
+double calculate(double num1, double num2, String operation) {
+  if (operation == "+") {
+    return num1 + num2;
+  }
+  if (operation == "-") {
+    return num1 - num2;
+  }
+  if (operation == "*") {
+    return num1 * num2;
+  }
+  if (operation == "/" && num2 != 0) {
+    return num1 / num2;
+  }
+
+  return 0.0;
 }

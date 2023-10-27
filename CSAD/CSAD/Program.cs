@@ -1,19 +1,62 @@
 ﻿using System.IO.Ports;
-
-SerialPort serialPort = new SerialPort("COM3", 9600);
-serialPort.Open();
-await Task.Delay(1000);
+var serialPort = new SerialPort("COM3", 9600);
 serialPort.DataReceived += (sender, e) =>
 {
     if (sender is SerialPort sender1)
     {
-        Console.WriteLine($"sender: {sender1.ReadExisting()}");
-        Console.WriteLine($"e: {e.EventType}");
+        Console.WriteLine($"Result: {sender1.ReadExisting()}");
     }
-
 };
-for(int i=0;i<5;i++){
-    serialPort.Write($"Hello World {i}");
-    await Task.Delay(3000);
+
+try
+{
+    serialPort.Open();
+    Console.WriteLine("Порт відкрито. Введіть два числа і операцію (+, -, *, /) через пробіл (наприклад, 5 10 +):");
+
+    while (true)
+    {
+        string input = Console.ReadLine();
+
+        if (input.ToLower() == "exit")
+        {
+            break;
+        }
+
+        string[] parts = input.Split(' ');
+
+        if (parts.Length != 3)
+        {
+            Console.WriteLine("Не вірний формат. Повторіть спробу.");
+            continue;
+        }
+
+        if (!double.TryParse(parts[0], out double number1) || !double.TryParse(parts[1], out double number2))
+        {
+            Console.WriteLine("Некоректні числа. Повторіть спробу.");
+            continue;
+        }
+
+        string operation = parts[2];
+
+        if (operation != "+" && operation != "-" && operation != "*" && operation != "/")
+        {
+            Console.WriteLine("Некоректна операція. Повторіть спробу.");
+            continue;
+        }
+
+        // Очищуємо буфер прийому перед надсиланням запиту
+        serialPort.DiscardInBuffer();
+
+        serialPort.WriteLine(number1.ToString());
+        serialPort.WriteLine(number2.ToString());
+        serialPort.WriteLine(operation);
+    }
 }
-await Task.Delay(60000);
+catch (Exception ex)
+{
+    Console.WriteLine($"Помилка: {ex.Message}");
+}
+finally
+{
+    serialPort.Close();
+}
