@@ -2,10 +2,16 @@
 
 String receivedLine = "";
 
+///
+/// funuction to setup the arduino
+///
 void setup() {
     Serial.begin(9600);
 }
 
+///
+/// funuction to loop the arduino. It will read the serial port and parse the line
+///
 void loop() {
     if (Serial.available() > 0) {
         char receivedChar = Serial.read();
@@ -20,6 +26,9 @@ void loop() {
     }
 }
 
+///
+/// funuction to parse a line from the ini file and get value and key
+///
 void parseLine(String line) {
     // Assuming the format is key=value
     int equalPos = line.indexOf('=');
@@ -39,6 +48,9 @@ void parseLine(String line) {
         }
 }
 
+///
+/// funuction that takes the operator and return priority
+///
 int precedence(char op) {
     if (op == '+' || op == '-') {
         return 1;
@@ -48,6 +60,9 @@ int precedence(char op) {
     return 0;
 }
 
+///
+/// funuction to apply the operation between two numbers
+///
 double applyOperation(double a, double b, char op) {
     switch (op) {
         case '+': return a + b;
@@ -58,6 +73,9 @@ double applyOperation(double a, double b, char op) {
     }
 }
 
+///
+/// funuction to evaluate the expression and put the value in the stack
+///
 double evaluateExpression(const char* expression) {
     double values[100];
     char ops[100];
